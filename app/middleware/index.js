@@ -3,6 +3,7 @@ var config = require('../lib/config');
 var formatUrl = require('url').format;
 var parseUrl = require('url').parse;
 var sass = require('node-sass');
+var sassMiddleware = require('node-sass-middleware');
 var xtend = require('xtend');
 var jwt = require('jwt-simple');
 var util = require('util');
@@ -68,7 +69,7 @@ exports.redirect = function (target, params, status) {
 };
 
 exports.sass = function (root, prefix) {
-  return sass.middleware({
+  return sassMiddleware({
     root: root,
     src: 'scss',
     dest: 'css',
