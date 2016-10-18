@@ -14,32 +14,32 @@
     "test": "./node_modules/.bin/mocha -R spec test/*.test.js"
   },
   "dependencies": {
-    "express": "~4.14.0",
+    "express": "~3.4.0",
     "express-monkey-patch": "~0.1.1",
-    "nunjucks": "~1.0.4",
+    "nunjucks": "~2.5.2",
     "optimist": "~0.6.0",
     "client-sessions": "~0.7.0",
-    "config-store": "~0.2.0",
-    "xtend": "~2.1.1",
-    "db-migrate": "~0.9.0",
+    "config-store": "~0.3.1",
+    "xtend": "~4.0.1",
+    "db-migrate": "~0.10.0-beta.20",
     "streamsql": "~0.8.5",
-    "jwt-simple": "~0.2.0",
-    "node-sass": "~3.8.0",
+    "jwt-simple": "~0.5.0",
+    "node-sass": "~3.10.1",
     "node-sass-middleware":"~0.9.8",
-    "newrelic": "*",
+    "newrelic": "~1.31.0",
     "helmet": "0.2.1",
-    "validator": "~3.5.1",
+    "validator": "~6.1.0",
     "express-persona-observer": "git+https://github.com/christensenep/express-persona-observer.git#multiple-buttons",
-    "async": "~0.2.9",
+    "async": "~2.1.2",
     "messina": "~0.1.2",
     "mysql": "~2.11.1",
     "badgekit-api-client": "git+https://github.com/mozilla/badgekit-api-client.git#milestones",
-    "data-uri-to-buffer": "0.0.3",
+    "data-uri-to-buffer": "0.0.4",
     "request": "~2.75.0"
   },
   "devDependencies": {
-    "mocha": "~1.15.1",
-    "should": "~2.1.1"
+    "mocha": "~3.1.2",
+    "should": "~11.1.1"
   },
   "engines": {
     "node": "^0.10.42"
