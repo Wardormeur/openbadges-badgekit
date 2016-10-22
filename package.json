@@ -21,7 +21,7 @@
     "client-sessions": "~0.7.0",
     "config-store": "~0.3.1",
     "xtend": "~4.0.1",
-    "db-migrate": "~0.10.0-beta.20",
+    "db-migrate": "~0.9.0",
     "streamsql": "~0.8.5",
     "jwt-simple": "~0.5.0",
     "node-sass": "~3.10.1",
