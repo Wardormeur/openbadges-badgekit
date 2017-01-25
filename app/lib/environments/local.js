@@ -4,7 +4,7 @@ exports.config = {
   protocol: 'http',
 
   // external hostname of the server.
-  hostname: 'localhost',
+  hostname: process.env.HOST || 'localhost',
 
   // When starting the application with `node app.js`, this is the port
   // that the application will try to bind to. When remote_port is *not*
