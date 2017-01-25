@@ -17,11 +17,24 @@ const path = require('path');
 const middleware = require('./middleware');
 const views = require('./views');
 const api = require('./api');
-const persona = require('express-persona-observer');
 const http = require('http');
 const helmet = require('helmet');
 
+//added elements for passport integration
+var csrf = require('csurf');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var flash = require('connect-flash');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 var app = express();
+
+//added for better handling of post rquests
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+//end
 
 var env = new nunjucks.Environment(new nunjucks.FileSystemLoader([path.join(__dirname, './templates'),
                                                                   path.join(__dirname, './static/templates')]),
@@ -70,30 +83,53 @@ if (process.env.IEXSS_PROTECTION_DISABLED != 'true') {
 app.use(helmet.hidePoweredBy());
 
 app.use(express.compress());
-app.use(express.bodyParser());
+//app.use(express.bodyParser());
 app.use(middleware.session());
 app.use(middleware.csrf({ whitelist: [ '/persona/login', '/persona/logout', '/persona/verify', '/api/user'] }));
 app.use(middleware.sass(staticDir, staticRoot));
 app.use(middleware.addCsrfToken);
 app.use(middleware.debug);
 app.use(staticRoot, express.static(staticDir));
+// Insert passport session managmement
+app.use(passport.initialize());
+app.use(passport.session());
 
-persona.express(app, { audience: config('PERSONA_AUDIENCE'),
-                       redirects: { notLoggedIn: '/', notLoggedOut: '/directory' },
-                       selectors: { login: '.js-login', logout: '.js-logout' },
-                       middleware: middleware.clearSession });
+//insert flash plus its requirements
+app.use(cookieParser());
+app.use(flash());
 
-var secureRouteHandlers = [persona.ensureLoggedIn(), middleware.verifyPermission(config('ACCESS_LIST', []), 'sorry.html')];
+// default values for template variables
+app.locals.error = [];
+app.locals.success = [];
+
+
+// configuration of passport create local strategy
+require('./auth/passport')(passport);
+
+// init csurf protection (gets passed to router later on)
+var csrfProtection = csrf({ cookie: false });
+var parseForm = bodyParser.urlencoded({ extended: false });
+
+
+var secureRouteHandlers = [middleware.verifyPermission(config('ACCESS_LIST', []), 'sorry.html')];
 var secureApiHandlers = [middleware.verifyApiRequest()];
 
-app.get('/', 'home', [persona.ensureLoggedOut()], views.home);
+
+app.get('/', 'home',  parseForm, csrfProtection, views.home);
+app.get('/login', 'login' ,parseForm, csrfProtection, views.login.home); 
+app.post('/login/auth', 'login.verifyAuth', passport.authenticate('local-login', { successRedirect: '/directory', failureRedirect: '/login', failureFlash: true }));
+app.get('/signup', 'login.signup', parseForm, csrfProtection, views.login.signup);
+app.post('/signup', 'signup.verifySignUp', parseForm, passport.authenticate('local-signup', { successRedirect : '/', failureRedirect : '/signup', failureFlash : true }));
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 app.get('/directory', 'directory', secureRouteHandlers, views.directory.home);
 app.get('/directory/addBadge', 'directory.addBadge', secureRouteHandlers, views.directory.addBadge);
 app.get('/directory/useTemplate', 'directory.useTemplate', secureRouteHandlers, views.directory.useTemplate);
-
 app.get('/badge/:badgeId', 'badge', secureRouteHandlers, views.badge.home);
 app.get('/badge/:badgeId/edit', 'badge.edit', secureRouteHandlers, views.badge.edit);
-app.del('/badge/:badgeId/delete', 'badge.delete', secureRouteHandlers, views.badge.del);
+app.delete('/badge/:badgeId/delete', 'badge.delete', secureRouteHandlers, views.badge.del);
 app.post('/badge/:badgeId/edit', 'badge.save', secureRouteHandlers, views.badge.save);
 app.post('/badge/:badgeId/archive', 'badge.archive', secureRouteHandlers, views.badge.archive);
 app.post('/badge/:badgeId/publish', 'badge.publish', secureRouteHandlers, views.badge.publish);
@@ -118,7 +154,7 @@ app.post('/settings/context', 'settings.setContext', secureRouteHandlers, views.
 app.get('/settings/context/data', 'settings.contextData', secureRouteHandlers, views.settings.contextData);
 app.get('/settings/users', 'settings.users', secureRouteHandlers, views.settings.users);
 app.post('/settings/users', 'settings.editUser', secureRouteHandlers, views.settings.editUser);
-app.del('/settings/users', 'settings.deleteUser', secureRouteHandlers, views.settings.deleteUser);
+app.delete('/settings/users', 'settings.deleteUser', secureRouteHandlers, views.settings.deleteUser);
 
 app.get('/studio/backgrounds', 'studio.backgrounds', secureRouteHandlers, views.badge.getBackgrounds);
 app.get('/studio/texts', 'studio.texts', secureRouteHandlers, views.badge.getTexts);
@@ -141,7 +177,7 @@ app.post('/share', 'share.subscribe', secureRouteHandlers, views.share.subscribe
 app.get('/share/:shareId', 'share.template', views.share.template);
 
 app.post('/api/user', 'api.user.add', secureApiHandlers, api.user.addUser);
-app.del('/api/user', 'api.user.delete', secureApiHandlers, api.user.deleteUser);
+app.delete('/api/user', 'api.user.delete', secureApiHandlers, api.user.deleteUser);
 
 app.get('*', function (req, res, next) {
   var error = new Error('Page not found');
@@ -155,6 +191,13 @@ app.get('*', function (req, res, next) {
 });
 
 app.all('*', function (req, res, next) {
+// extra debuglines
+  console.log('output req');
+  console.log(req);
+//  console.log('output res');
+//  console.log(res);
+  console.log('output next');
+  console.log(next);
   var error = new Error('Method not allowed');
 
   Object.defineProperties(error, {

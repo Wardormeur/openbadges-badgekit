@@ -130,10 +130,15 @@ exports.verifyPermission = function verifyPermission (siteAdminList, deniedPage)
         return res.render(deniedPage);
     }
 
-    if (req.fromLoggedInUser()) {
+//    if (req.fromLoggedInUser()) {
+//  alternative to logincheck from persona use passport login check
+    if (req.user) {
       if (siteAdminList.some(function(email) { return new RegExp(email.replace('*', '.+?')).test(req.session.email) })) {
         if (!req.session.context)
           req.session.context = { system: { slug: config('OPENBADGER_SYSTEM') }};
+
+// check userinfo
+        res.locals.loggedInUser = req.session.email || null;
 
         res.locals.contextName = makeContextName(req.session.context);
         res.locals.isSiteAdmin = true;

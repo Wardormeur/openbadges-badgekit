@@ -5,12 +5,14 @@
   {% block head -%}
     {{ newrelic.getBrowserTimingHeader() | safe }}
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="{{ static('/css/bootstrap.min.css') }}" media="all">
     <link rel="stylesheet" href="{{ static('/css/normalize.css') }}">
     <link rel="stylesheet" href="{{ static('/css/base.css') }}">
     <link rel="stylesheet" href="{{ static('/css/global.css') }}">
     <link rel="stylesheet" href="{{ static('/css/font-awesome.css') }}">
     <link rel="stylesheet" href="{{ static('/css/home.css') }}">
     <link rel="stylesheet" href="{{ static('/css/responsive.css') }}">
+
 
     <link rel="shortcut icon" href="{{ static('/images/badgekit-favicon.ico') }}">
   {%- endblock %}
@@ -55,7 +57,7 @@
                 {{ loggedInUser }}
                 <ul class="menu-hover logout-hover">
                   <a href="{{ url('settings') }}"><li>Settings</li></a>
-                  <a class="js-logout" href=""><li>Logout</li></a>
+                  <a class="js-logout" href="/logout"><li>Logout</li></a>
                 </ul>
               </li>
             </ul>
@@ -110,8 +112,13 @@
             <a href="{{ url('help') }}"><li class="menu-item">Help</li></a>
           </ul>
           <ul class="navigation-dropdown">
-            <a href="#" class="js-login login-hover">
+            <a href="{{ url('login') }}" class="js-login login-hover">
               <li class="menu-item"><i class="fa fa-sign-in"></i>Log In</li>
+            </a>
+          </ul>
+          <ul class="navigation-dropdown">
+            <a href="{{ url('login.signup') }}" class="js-key key-hover">
+              <li class="menu-item"><i class="fa fa-key"></i>Signup</li>
             </a>
           </ul>
 
@@ -180,12 +187,15 @@
     {%- endblock %}
   {%- endblock %}
   {% block scripts -%}
-    <script src="https://login.persona.org/include.js"></script>
     <script src="{{ static('/js/jquery.min.js') }}"></script>
+    <script src="{{ static('/js/bootstrap.min.js') }}"></script>
     <script src="{{ static('/js/nunjucks.min.js') }}"></script>
     <script src="{{ static('/js/masonry.pkgd.min.js') }}"></script>
     <script src="{{ static('/js/common.js') }}"></script>
-    <script src="{{loginScriptUrl}}"></script>
+    <script src="{{ static('/js/jquery.bootstrap-growl.min.js') }}"></script>
   {%- endblock %}
+    {% if error.length or success.length or info.length %}
+    {% include "includes/flash-messages.html" %}
+    {% endif %}
 </body>
 </html>

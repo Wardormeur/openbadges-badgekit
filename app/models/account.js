@@ -1,5 +1,6 @@
 var getDb = require('../lib/db').getDb;
 var async = require('async');
+var bcrypt   = require('bcrypt-nodejs');
 
 var AccountPermission = require('./account-permission')("DATABASE");
 
@@ -9,7 +10,13 @@ module.exports = function getAccountModel (key) {
   var Account = db.table('account', {
     fields: 
       ['id',
-       'email'],
+       'email',
+       'last_login',
+       'active',
+       'passwd',
+       'salt',
+       'created_at',
+       'updated_at'],
     relationships: {
       accountPermissions: {
         type: 'hasMany',
@@ -19,9 +26,22 @@ module.exports = function getAccountModel (key) {
     },
     methods: {
       hasPermission: hasPermission,
-      setPermission: setPermission
+      setPermission: setPermission,
+      generateHash: generateHash,
+      generateSalt: generateSalt
     }
   });
+
+
+  function generateHash(password, salt){
+  // generating a hash
+  return bcrypt.hashSync(password, salt, null);
+  }
+
+  function generateSalt(){
+  //generate salt for database
+  return bcrypt.genSaltSync(8);
+  }
 
 
   function hasPermission(context, action) {

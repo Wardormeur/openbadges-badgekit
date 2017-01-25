@@ -6,6 +6,7 @@ exports.sorry = function sorry (req, res, next) {
   res.render('sorry.html');
 };
 
+exports.login = require('./login');
 exports.directory = require('./directory');
 exports.badge = require('./badge');
 exports.studio = require('./studio');
