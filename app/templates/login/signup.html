@@ -1,0 +1,27 @@
+{% extends 'login/layout.html' %}
+{% block content %}
+
+  <div class="container">
+        <h2>Sign up</h2>
+        <h3>Create a Backpack account</h3>
+        <form action="{{ url('login.signup') }}" method="post">
+          <input name="_csrf" type="hidden" value="{{ csrfToken }}"></input>
+        <div class="form-field-wrapper">
+                <label class="badge-label left" for="username">E-mail</label>
+                <input class="badge-field" type="text" name="username" value="">
+        </div>
+        <div class="form-field-wrapper">
+                <label class="badge-label left" for="password">Password</label>
+                <input class="badge-field" type="password" name="password" value="">
+        </div>
+        <button class="btn submit-btn" type="submit">Signup</button>
+    </form>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super () }}
+  <script src="/js/owasp-password-strength-test.js"></script>
+  <script src="/js/password-check.js"></script>
+{% endblock %}
+
