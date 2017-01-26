@@ -14,6 +14,7 @@
     "test": "./node_modules/.bin/mocha -R spec test/*.test.js"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "express": "~3.12.0",
     "express-monkey-patch": "~0.1.1",
     "nunjucks": "~2.5.2",
