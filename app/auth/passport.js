@@ -167,6 +167,24 @@ module.exports = function(passport) {
 	                	if (err)
 	                       		return done(err);
 	                //if we got an account return a success
+			//return done(null,user);
+			//disabled above and added following lines for demo
+			const context = { 
+					system: 'badgekit',
+                    			issuer: null,
+                    			program: null 
+					};
+
+  			const permissions = { 
+					canDraft: true,
+                        		canPublish: true,
+                        		canReview: true
+					};	
+			user.setPermission(context, permissions, function(err, result) {
+      				if (err)
+        				return done(err);
+				});
+			//if we got an account and added demo permissions return a succes
 			return done(null,user);
 			});
 		    }});
