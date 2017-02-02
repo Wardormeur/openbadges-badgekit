@@ -7,7 +7,7 @@ exports.up = function(db, callback) {
     + "ADD `last_login`  BIGINT(13) NULL DEFAULT NULL,"
     + "ADD `active` BOOLEAN DEFAULT 1,"
     + "ADD `passwd` VARCHAR(255),"
-    + "ADD `salt` TINYBLOB, "
+    + "ADD `salt` VARCHAR(255), "
     + "ADD `created_at` BIGINT( 13 ) NULL DEFAULT NULL,"
     + "ADD `updated_at` BIGINT( 13 ) NULL DEFAULT NULL;", callback);
 };
