@@ -31,7 +31,7 @@ var LocalStrategy = require('passport-local').Strategy;
 var app = express();
 
 //added for better handling of post rquests
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //end
@@ -83,10 +83,9 @@ if (process.env.IEXSS_PROTECTION_DISABLED != 'true') {
 app.use(helmet.hidePoweredBy());
 
 app.use(express.compress());
-//app.use(express.bodyParser());
 app.use(middleware.session());
-app.use(middleware.csrf({ whitelist: [ '/persona/login', '/persona/logout', '/persona/verify', '/api/user'] }));
-app.use(middleware.sass(staticDir, staticRoot));
+app.use(middleware.csrf({ whitelist: ['/api/user'] }));
+app.use(middleware.sass(staticDir, staticRoot + '/css'));
 app.use(middleware.addCsrfToken);
 app.use(middleware.debug);
 app.use(staticRoot, express.static(staticDir));
@@ -116,10 +115,8 @@ var secureApiHandlers = [middleware.verifyApiRequest()];
 
 
 app.get('/', 'home',  parseForm, csrfProtection, views.home);
-app.get('/login', 'login' ,parseForm, csrfProtection, views.login.home); 
+app.get('/login', 'login' ,parseForm, csrfProtection, views.login.home);
 app.post('/login/auth', 'login.verifyAuth', passport.authenticate('local-login', { successRedirect: '/directory', failureRedirect: '/login', failureFlash: true }));
-app.get('/signup', 'login.signup', parseForm, csrfProtection, views.login.signup);
-app.post('/signup', 'signup.verifySignUp', parseForm, passport.authenticate('local-signup', { successRedirect : '/', failureRedirect : '/signup', failureFlash : true }));
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
@@ -191,13 +188,6 @@ app.get('*', function (req, res, next) {
 });
 
 app.all('*', function (req, res, next) {
-// extra debuglines
-  console.log('output req');
-  console.log(req);
-//  console.log('output res');
-//  console.log(res);
-  console.log('output next');
-  console.log(next);
   var error = new Error('Method not allowed');
 
   Object.defineProperties(error, {

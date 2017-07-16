@@ -12,9 +12,3 @@ exports.home = function home (req, res, next) {
     error: req.flash('error')
   });
 };
-
-exports.signup = function signup (req, res, next) {
-  res.render('login/signup.html', {
-    error: req.flash('error')
-  });
-};

@@ -7,6 +7,7 @@ var sassMiddleware = require('node-sass-middleware');
 var xtend = require('xtend');
 var jwt = require('jwt-simple');
 var util = require('util');
+var path = require('path');
 
 var Account = require('../models/account')("DATABASE");
 
@@ -73,8 +74,7 @@ exports.sass = function (root, prefix) {
     root: root,
     src: 'scss',
     dest: 'css',
-    prefix: prefix,
-    debug: config('debug', false)
+    prefix: prefix
   });
 };
 
@@ -97,7 +97,7 @@ exports.verifyPermission = function verifyPermission (siteAdminList, deniedPage)
 
       return function (data) {
         return xtend(slugContext, data);
-      }  
+      }
     }
 
     function buildContext(permissions) {
@@ -155,7 +155,7 @@ exports.verifyPermission = function verifyPermission (siteAdminList, deniedPage)
             return sendDenied();
 
           res.locals.hasPermission = row.hasPermission.bind(row);
-          
+
           if (!req.session.context)
             req.session.context = buildContext(row.accountPermissions[0]);
           if (!req.session.context.system) {

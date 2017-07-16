@@ -21,7 +21,6 @@ module.exports = function getBadgeModel (key) {
   function setCriteria(criteria, callback) {
     var criteriaIds = [];
     const badgeId = this.id;
-
     async.each(criteria, function(criterion, innerCallback) {
       criterion.badgeId = badgeId;
       Criteria.put(criterion, function(err, result) {
@@ -94,7 +93,7 @@ module.exports = function getBadgeModel (key) {
           };
         });
       }
-      
+
       Alignment.del(deleteQuery, function(err) {
         return callback(err);
       });
@@ -145,7 +144,7 @@ module.exports = function getBadgeModel (key) {
 
     if (!Array.isArray(supportBadges))
       supportBadges = [supportBadges];
-    
+
     var supportSlugs = supportBadges.map(function (supportBadge) { return supportBadge.supportBadgeSlug || supportBadge });
 
     SupportBadge.del({primaryBadgeId: badgeId}, function (err) {
@@ -441,4 +440,3 @@ module.exports = function getBadgeModel (key) {
 
   return Badge;
 };
-
