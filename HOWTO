@@ -1,0 +1,10 @@
+HOWTO migrate
+TRY
+source ../source.env && node db-migrate up --dry-run --verbose
+OR
+ALTER TABLE  `account` ADD `last_login`  BIGINT(13) NULL DEFAULT NULL, ADD `active` BOOLEAN DEFAULT 1, ADD `passwd` VARCHAR(255), ADD `salt` VARCHAR(255), ADD `created_at` BIGINT( 13 ) NULL DEFAULT NULL, ADD `updated_at` BIGINT( 13 ) NULL DEFAULT NULL;
+REPLACE undefined with migration table ?
+[SQL] INSERT INTO `undefined` (`name`, `run_on`) VALUES (?, ?) [ [ 'undefined/20170106121603-upgrade-account-to-allow-for-logins',
+    '2017-07-16 11:38:18' ] ]
+INSERT INTO `undefined` (`name`, `run_on`) VALUES (?, ?) [ [ 'undefined/20170106121603-upgrade-account-to-allow-for-logins',
+    '2017-07-16 11:38:18' ] ]
